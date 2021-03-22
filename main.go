@@ -34,6 +34,6 @@ func main() {
 		}
 	}(db)
 
-	webApp := web.NewApp(apps)
+	webApp := web.NewApp(apps, cfg)
 	webApp.Run()
 }

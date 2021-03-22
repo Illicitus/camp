@@ -32,5 +32,6 @@ func (s *SubApp) CollectModels(db *web.DB) error {
 }
 
 func (s *SubApp) CollectRoutes(r *mux.Router) {
+	r.HandleFunc("/signup", s.uc.New).Methods("GET")
 	r.HandleFunc("/signup", s.uc.Create).Methods("POST")
 }

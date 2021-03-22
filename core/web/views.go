@@ -42,7 +42,9 @@ func NewView(templateDir string, layoutDir string, layout string, files ...strin
 }
 
 func (v *View) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	v.Render(w, r, nil)
+	if err := v.Render(w, r, nil); err != nil {
+		panic(err)
+	}
 }
 
 func (v *View) Render(w http.ResponseWriter, r *http.Request, data interface{}) error {
@@ -53,13 +55,14 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data interface{}) 
 			return csrfField
 		},
 	})
-
 	if err := tpl.ExecuteTemplate(&buf, v.Layout, data); err != nil {
 		log.Println(err)
 		http.Error(w, "Something went wrong. If the problem persists, please email us.", http.StatusInternalServerError)
 		return nil
 	}
-	io.Copy(w, &buf)
+	if _, err := io.Copy(w, &buf); err != nil {
+		panic(err)
+	}
 	return nil
 }
 
@@ -68,7 +71,6 @@ func layoutFiles(layoutDir string) []string {
 	if err != nil {
 		panic(err)
 	}
-
 	return files
 }
 

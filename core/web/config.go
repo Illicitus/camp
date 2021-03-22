@@ -63,6 +63,7 @@ func LoadConfig() AppConfig {
 		fmt.Println("Using the default config...")
 		return DefaultAppConfig()
 	}
+
 	var ac AppConfig
 	dec := json.NewDecoder(f)
 	err = dec.Decode(&ac)

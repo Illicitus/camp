@@ -12,14 +12,20 @@ var (
 )
 
 type UserController struct {
-	New *web.View
-	us  UserService
+	NewView *web.View
+	us      UserService
 }
 
 func NewController(db *web.DB, cfg web.AppConfig) *UserController {
 	return &UserController{
-		New: web.NewView(TemplateDir, LayoutDir, "bootstrap", "new"),
-		us:  NewUserService(db.Conn, cfg.Pepper, cfg.HMACKey),
+		NewView: web.NewView(TemplateDir, LayoutDir, "bootstrap", "new"),
+		us:      NewUserService(db.Conn, cfg.Pepper, cfg.HMACKey),
+	}
+}
+
+func (uc *UserController) New(w http.ResponseWriter, r *http.Request) {
+	if err := uc.NewView.Render(w, r, nil); err != nil {
+		panic(err)
 	}
 }
 
@@ -29,7 +35,7 @@ func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 	if err := web.ParseForm(r, &form); err != nil {
 		log.Println(err)
 		vd.SetAlert(err)
-		if err := uc.New.Render(w, r, vd); err != nil {
+		if err := uc.NewView.Render(w, r, vd); err != nil {
 			panic(err)
 		}
 		return
@@ -43,7 +49,7 @@ func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 	if err := uc.us.Create(&user); err != nil {
 		log.Println(err)
 		vd.SetAlert(err)
-		if err := uc.New.Render(w, r, vd); err != nil {
+		if err := uc.NewView.Render(w, r, vd); err != nil {
 			panic(err)
 		}
 		return

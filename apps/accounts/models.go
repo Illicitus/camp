@@ -18,7 +18,7 @@ type User struct {
 	RememberHash string `gorm:"not null;unique_index"`
 }
 
-func (u User) IsGormModel() bool { return true }
+func (u User) IsGormModel() {}
 
 type UserDB interface {
 	// Methods for altering users
@@ -28,6 +28,6 @@ type UserDB interface {
 
 	// Methods for querying for single user
 	//ByID(id uint) (*User, error)
-	//ByEmail(email string) (*User, error)
+	ByEmail(email string) (*User, error)
 	//ByRemember(token string) (*User, error)
 }

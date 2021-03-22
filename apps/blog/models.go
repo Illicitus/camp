@@ -17,7 +17,7 @@ type Article struct {
 	Body     string        `gorm:"not null"`
 }
 
-func (a Article) IsGormModel() bool { return true }
+func (a Article) IsGormModel() {}
 
 type ArticleDB interface{}
 
@@ -32,6 +32,6 @@ type Comment struct {
 	Body      string        `gorm:"not null"`
 }
 
-func (c Comment) IsGormModel() bool { return true }
+func (c Comment) IsGormModel() {}
 
 type CommentDB interface{}

@@ -18,7 +18,7 @@ type App struct {
 	router            *mux.Router
 }
 
-func NewApp(apps []SubApp) *App {
+func NewApp(apps []SubApp, cfg AppConfig) *App {
 	r := mux.NewRouter()
 
 	for _, app := range apps {
@@ -26,7 +26,7 @@ func NewApp(apps []SubApp) *App {
 	}
 
 	return &App{
-		cfg:    LoadConfig(),
+		cfg:    cfg,
 		apps:   apps,
 		router: r,
 	}
