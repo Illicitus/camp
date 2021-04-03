@@ -4,7 +4,7 @@
             <div class="col-md-6 offset-md-3">
                 <div class="card">
                     <div class="card-body">
-                        {{template "signupForm"}}
+                        {{template "loginForm"}}
                     </div>
                 </div>
             </div>
@@ -12,13 +12,9 @@
     </div>
 {{end}}
 
-{{define "signupForm"}}
-    <form action="/accounts/signup" method="POST">
+{{define "loginForm"}}
+    <form action="/accounts/login" method="POST">
         {{csrfField}}
-        <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
-            <input type="text" name="name" class="form-control" id="name" aria-describedby="Your full name">
-        </div>
         <div class="mb-3">
             <label for="email" class="form-label">Email address</label>
             <input type="email" name="email" class="form-control" id="email" aria-describedby="Email">
@@ -28,7 +24,7 @@
             <label for="password" class="form-label">Password</label>
             <input type="password" name="password" class="form-control" id="password">
         </div>
-        <button type="submit" class="btn btn-primary">Sign Up</button>
+        <button type="submit" class="btn btn-primary">Log In</button>
     </form>
 {{end}}
 

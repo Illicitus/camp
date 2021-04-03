@@ -23,11 +23,11 @@ func (u User) IsGormModel() {}
 type UserDB interface {
 	// Methods for altering users
 	Create(user *User) error
-	//Update(user *User) error
-	//Delete(id uint) error
+	Update(user *User) error
+	Delete(id uint) error
 
 	// Methods for querying for single user
-	//ByID(id uint) (*User, error)
+	ByID(id uint) (*User, error)
 	ByEmail(email string) (*User, error)
-	//ByRemember(token string) (*User, error)
+	ByRemember(token string) (*User, error)
 }

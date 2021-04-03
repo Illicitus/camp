@@ -5,8 +5,8 @@ import (
 )
 
 var (
-	LayoutDir   string = "apps/core/views/layouts/"
-	TemplateDir string = "apps/core/views/"
+	LayoutDir   = "apps/core/views/layouts/"
+	TemplateDir = "apps/core/views/"
 )
 
 type Controller struct {
