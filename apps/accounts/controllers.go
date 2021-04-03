@@ -24,9 +24,7 @@ func NewController(db *web.DB, cfg *web.AppConfig) *UserController {
 }
 
 func (uc *UserController) New(w http.ResponseWriter, r *http.Request) {
-	if err := uc.NewView.Render(w, r, nil); err != nil {
-		panic(err)
-	}
+	hub.ErrorHandler(uc.NewView.Render(w, r, nil))
 }
 
 func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
@@ -35,9 +33,7 @@ func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 	if err := web.ParseForm(r, &form); err != nil {
 		log.Println(err)
 		vd.SetAlert(err)
-		if err := uc.NewView.Render(w, r, vd); err != nil {
-			panic(err)
-		}
+		hub.ErrorHandler(uc.NewView.Render(w, r, vd))
 		return
 	}
 
@@ -49,9 +45,7 @@ func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 	if err := uc.us.Create(&user); err != nil {
 		log.Println(err)
 		vd.SetAlert(err)
-		if err := uc.NewView.Render(w, r, vd); err != nil {
-			panic(err)
-		}
+		hub.ErrorHandler(uc.NewView.Render(w, r, vd))
 		return
 	}
 	//err := uc.signIn(w, &user)

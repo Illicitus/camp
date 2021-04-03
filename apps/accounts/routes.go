@@ -15,9 +15,8 @@ func NewSubApp(db *web.DB, cfg *web.AppConfig) *SubApp {
 	app := &SubApp{
 		uc: NewController(db, cfg),
 	}
-	if err := app.CollectModels(db); err != nil {
-		panic(err)
-	}
+	hub.ErrorHandler(app.CollectModels(db))
+
 	return app
 }
 
