@@ -12,13 +12,13 @@ type SubApp interface {
 }
 
 type App struct {
-	cfg               AppConfig
+	cfg               *AppConfig
 	appsRootDirectory string
 	apps              []SubApp
 	router            *mux.Router
 }
 
-func NewApp(apps []SubApp, cfg AppConfig) *App {
+func NewApp(apps []SubApp, cfg *AppConfig) *App {
 	r := mux.NewRouter()
 
 	for _, app := range apps {

@@ -11,7 +11,7 @@ type SubApp struct {
 	uc *UserController
 }
 
-func NewSubApp(db *web.DB, cfg web.AppConfig) *SubApp {
+func NewSubApp(db *web.DB, cfg *web.AppConfig) *SubApp {
 	app := &SubApp{
 		uc: NewController(db, cfg),
 	}

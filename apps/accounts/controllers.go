@@ -16,7 +16,7 @@ type UserController struct {
 	us      UserService
 }
 
-func NewController(db *web.DB, cfg web.AppConfig) *UserController {
+func NewController(db *web.DB, cfg *web.AppConfig) *UserController {
 	return &UserController{
 		NewView: web.NewView(TemplateDir, LayoutDir, "bootstrap", "new"),
 		us:      NewUserService(db.Conn, cfg.Pepper, cfg.HMACKey),

@@ -9,7 +9,7 @@ var _ web.SubApp = &SubApp{}
 
 type SubApp struct{}
 
-func NewSubApp(db *web.DB, cfg web.AppConfig) *SubApp {
+func NewSubApp(db *web.DB, cfg *web.AppConfig) *SubApp {
 	app := &SubApp{
 		//uc: NewController(db, cfg),
 	}

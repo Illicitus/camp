@@ -16,7 +16,7 @@ type Controller struct {
 	MoreInfo *web.View
 }
 
-func NewController(db *web.DB, cfg web.AppConfig) *Controller {
+func NewController(db *web.DB, cfg *web.AppConfig) *Controller {
 	return &Controller{
 		About:    web.NewView(TemplateDir, LayoutDir, "bootstrap", "about"),
 		Contact:  web.NewView(TemplateDir, LayoutDir, "bootstrap", "contact"),

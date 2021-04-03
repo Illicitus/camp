@@ -9,7 +9,7 @@ import (
 
 func main() {
 	cfg := web.LoadConfig()
-	db, err := web.NewDbConnection(cfg.Database.Dialect(), cfg.Database.ConnectionInfo(), cfg.IsProd())
+	db, err := web.NewDbConnection(cfg.Database.Dialect, cfg.Database.ConnectionInfo(), cfg.IsProd())
 	if err != nil {
 		panic(err)
 	}

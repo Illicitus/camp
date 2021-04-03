@@ -11,7 +11,7 @@ type SubApp struct {
 	c *Controller
 }
 
-func NewSubApp(db *web.DB, cfg web.AppConfig) *SubApp {
+func NewSubApp(db *web.DB, cfg *web.AppConfig) *SubApp {
 	app := &SubApp{
 		c: NewController(db, cfg),
 	}

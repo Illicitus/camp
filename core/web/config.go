@@ -1,75 +1,76 @@
 package web
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
 )
 
-type PostgresConfig struct {
-	Host     string `json:"host"`
-	Port     int    `json:"port"`
-	Name     string `json:"name"`
-	User     string `json:"user"`
-	Password string `json:"password"`
+type DatabaseConfig struct {
+	Host     string
+	Port     int
+	Name     string
+	User     string
+	Password string
+	Dialect  string
 }
 
-func (pc PostgresConfig) ConnectionInfo() string {
+func (db DatabaseConfig) ConnectionInfo() string {
 	return fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		pc.Host, pc.Port, pc.User, pc.Password, pc.Name,
+		db.Host, db.Port, db.User, db.Password, db.Name,
 	)
 }
 
-func (pc PostgresConfig) Dialect() string {
-	return "postgres"
+type SentryConfig struct {
+	Dns string
 }
 
-func DefaultPostgresConfig() PostgresConfig {
-	return PostgresConfig{
-		Host:     "localhost",
-		Port:     5432,
-		Name:     "camp",
-		User:     "user",
-		Password: "password",
-	}
-}
+var appConf *AppConfig
 
 type AppConfig struct {
-	Port     int            `json:"port"`
-	Env      string         `json:"env"`
-	Pepper   string         `json:"pepper"`
-	HMACKey  string         `json:"hmac_key"`
-	Database PostgresConfig `json:"database"`
+	IsCorrectGenerated bool
+	Port               int
+	Env                string
+	Pepper             string
+	HMACKey            string
+	Database           DatabaseConfig
+	Sentry             SentryConfig
 }
 
 func (c AppConfig) IsProd() bool {
 	return c.Env == "prod"
 }
 
-func DefaultAppConfig() AppConfig {
-	return AppConfig{
-		Port:     3000,
-		Env:      "dev",
-		Pepper:   "secret-random-string",
-		HMACKey:  "secret-hmac-key",
-		Database: DefaultPostgresConfig(),
+func NewConfig() *AppConfig {
+	InitEnv()
+
+	sentryConf := SentryConfig{
+		Dns: getEnv("SENTRY_WORKER_DNS", ""),
 	}
+
+	dbConf := DatabaseConfig{
+		Host:     getEnv("DB_HOST", "localhost"),
+		Port:     getEnvAsInt("DB_PORT", 5432),
+		Name:     getEnv("DB_NAME", "camp"),
+		User:     getEnv("DB_USER", "user"),
+		Password: getEnv("DB_PASSWORD", "password"),
+		Dialect:  getEnv("DB_DIALECT", "postgres"),
+	}
+
+	appConf = &AppConfig{
+		IsCorrectGenerated: true,
+		Port:               getEnvAsInt("WEB_PORT", 3000),
+		Env:                getEnv("WEB_ENV", "dev"),
+		Pepper:             getEnv("PEPPER", "secret-random-string"),
+		HMACKey:            getEnv("HMACKey", "secret-hmac-key"),
+		Database:           dbConf,
+		Sentry:             sentryConf,
+	}
+	return appConf
 }
 
-func LoadConfig() AppConfig {
-	f, err := os.Open("config.json")
-	if err != nil {
-		fmt.Println("Using the default config...")
-		return DefaultAppConfig()
+func LoadConfig() *AppConfig {
+	if &appConf != nil || !appConf.IsCorrectGenerated {
+		return NewConfig()
 	}
-
-	var ac AppConfig
-	dec := json.NewDecoder(f)
-	err = dec.Decode(&ac)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("Successfully upload config...")
-	return ac
+	return appConf
 }
