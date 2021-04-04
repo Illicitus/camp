@@ -5,8 +5,10 @@ import (
 	"camp/core/web"
 )
 
+const SubAppName = "accounts"
+
 var cfg = web.LoadConfig()
-var hub = utils.NewLocalHub("accounts", cfg.IsProd())
+var hub = utils.NewLocalHub(SubAppName, cfg.IsProd())
 
 var _ web.SubApp = &SubApp{}
 

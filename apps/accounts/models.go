@@ -1,9 +1,11 @@
 package accounts
 
 import (
+	"camp/core/utils"
 	"camp/core/web"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"reflect"
 )
 
 var _ web.Model = &UserModel{}
@@ -18,11 +20,11 @@ type UserModel struct {
 	RememberHash string `gorm:"not null;unique_index"`
 }
 
-func (u UserModel) TableName() string {
-	return "accounts_users"
+func (m UserModel) TableName() string {
+	return utils.NormalizeModelName(SubAppName, reflect.TypeOf(m).Name())
 }
 
-func (u UserModel) IsGormModel() {}
+func (_ UserModel) IsGormModel() {}
 
 type UserDB interface {
 	// Methods for altering users

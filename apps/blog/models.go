@@ -2,14 +2,16 @@ package blog
 
 import (
 	"camp/apps/accounts"
+	"camp/core/utils"
 	"camp/core/web"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"reflect"
 )
 
-var _ web.Model = &Article{}
+var _ web.Model = &ArticleModel{}
 
-type Article struct {
+type ArticleModel struct {
 	gorm.Model
 	AuthorID int                `gorm:"not null"`
 	Author   accounts.UserModel `gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
@@ -17,21 +19,27 @@ type Article struct {
 	Body     string             `gorm:"not null"`
 }
 
-func (a Article) IsGormModel() {}
+func (_ ArticleModel) IsGormModel() {}
+func (m ArticleModel) TableName() string {
+	return utils.NormalizeModelName(SubAppName, reflect.TypeOf(m).Name())
+}
 
 type ArticleDB interface{}
 
-var _ web.Model = &Comment{}
+var _ web.Model = &CommentModel{}
 
-type Comment struct {
+type CommentModel struct {
 	gorm.Model
 	AuthorID  int                `gorm:"not null"`
 	Author    accounts.UserModel `gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	ArticleID int                `gorm:"not null"`
-	Article   Article            `gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Article   ArticleModel       `gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Body      string             `gorm:"not null"`
 }
 
-func (c Comment) IsGormModel() {}
+func (_ CommentModel) IsGormModel() {}
+func (m CommentModel) TableName() string {
+	return utils.NormalizeModelName(SubAppName, reflect.TypeOf(m).Name())
+}
 
 type CommentDB interface{}

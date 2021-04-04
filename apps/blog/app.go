@@ -5,8 +5,10 @@ import (
 	"camp/core/web"
 )
 
+const SubAppName = "blog"
+
 var cfg = web.LoadConfig()
-var hub = utils.NewLocalHub("blog", cfg.IsProd())
+var hub = utils.NewLocalHub(SubAppName, cfg.IsProd())
 
 var _ web.SubApp = &SubApp{}
 
@@ -24,7 +26,7 @@ func NewSubApp(db *web.DB, cfg *web.AppConfig) *SubApp {
 
 func (s *SubApp) CollectModels(db *web.DB) error {
 	models := []web.Model{
-		&Article{}, &Comment{},
+		&ArticleModel{}, &CommentModel{},
 	}
 	for _, m := range models {
 		db.Models = append(db.Models, m)
