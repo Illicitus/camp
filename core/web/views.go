@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	TemplateExt string = ".gohtml"
+	TemplateExt = ".gohtml"
 )
 
 type View struct {
@@ -79,7 +79,7 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data interface{}) 
 		return nil
 	}
 	if _, err := io.Copy(w, &buf); err != nil {
-		panic(err)
+		return err
 	}
 	return nil
 }

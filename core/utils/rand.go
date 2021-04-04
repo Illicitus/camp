@@ -12,9 +12,8 @@ func Bytes(n int) ([]byte, error) {
 
 	_, err := rand.Read(b)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-
 	return b, nil
 }
 
@@ -23,7 +22,6 @@ func NBytes(base64String string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-
 	return len(b), nil
 }
 
@@ -32,7 +30,6 @@ func String(nBytes int) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	return base64.URLEncoding.EncodeToString(b), nil
 }
 

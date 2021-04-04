@@ -32,7 +32,7 @@ func main() {
 		hub.ErrorHandler(db.Close())
 	}(db)
 
-	// Generate web app
+	// Generate web sub app
 	apps := []web.SubApp{
 		accounts.NewSubApp(db, cfg),
 		blog.NewSubApp(db, cfg),
