@@ -6,9 +6,9 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-var _ web.Model = &User{}
+var _ web.Model = &UserModel{}
 
-type User struct {
+type UserModel struct {
 	gorm.Model
 	Name         string
 	Email        string `gorm:"not null;unique_index"`
@@ -18,16 +18,20 @@ type User struct {
 	RememberHash string `gorm:"not null;unique_index"`
 }
 
-func (u User) IsGormModel() {}
+func (u UserModel) TableName() string {
+	return "accounts_users"
+}
+
+func (u UserModel) IsGormModel() {}
 
 type UserDB interface {
 	// Methods for altering users
-	Create(user *User) error
-	Update(user *User) error
+	Create(user *UserModel) error
+	Update(user *UserModel) error
 	Delete(id uint) error
 
 	// Methods for querying for single user
-	ByID(id uint) (*User, error)
-	ByEmail(email string) (*User, error)
-	ByRemember(token string) (*User, error)
+	ByID(id uint) (*UserModel, error)
+	ByEmail(email string) (*UserModel, error)
+	ByRemember(token string) (*UserModel, error)
 }

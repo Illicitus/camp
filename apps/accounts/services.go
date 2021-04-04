@@ -8,7 +8,7 @@ import (
 
 // UserService is a set of methods used to manipulate and work with the user model
 type UserService interface {
-	Authenticate(email, password string) (*User, error)
+	Authenticate(email, password string) (*UserModel, error)
 	UserDB
 }
 
@@ -30,7 +30,7 @@ type userService struct {
 	pepper string
 }
 
-func (us *userService) Authenticate(email, password string) (*User, error) {
+func (us *userService) Authenticate(email, password string) (*UserModel, error) {
 	foundUser, err := us.ByEmail(email)
 	if err != nil {
 		return nil, err

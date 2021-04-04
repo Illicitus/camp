@@ -46,3 +46,5 @@ func (lh *LocalHub) ErrorHandler(err error) {
 		log.Fatal(err)
 	}
 }
+
+func (lh *LocalHub) IgnoreErrorHandler(_ error) {}

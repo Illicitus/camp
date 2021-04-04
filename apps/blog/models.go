@@ -11,10 +11,10 @@ var _ web.Model = &Article{}
 
 type Article struct {
 	gorm.Model
-	AuthorID int           `gorm:"not null"`
-	Author   accounts.User `gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	Title    string        `gorm:"not null"`
-	Body     string        `gorm:"not null"`
+	AuthorID int                `gorm:"not null"`
+	Author   accounts.UserModel `gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Title    string             `gorm:"not null"`
+	Body     string             `gorm:"not null"`
 }
 
 func (a Article) IsGormModel() {}
@@ -25,11 +25,11 @@ var _ web.Model = &Comment{}
 
 type Comment struct {
 	gorm.Model
-	AuthorID  int           `gorm:"not null"`
-	Author    accounts.User `gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	ArticleID int           `gorm:"not null"`
-	Article   Article       `gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	Body      string        `gorm:"not null"`
+	AuthorID  int                `gorm:"not null"`
+	Author    accounts.UserModel `gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	ArticleID int                `gorm:"not null"`
+	Article   Article            `gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Body      string             `gorm:"not null"`
 }
 
 func (c Comment) IsGormModel() {}

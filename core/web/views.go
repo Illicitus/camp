@@ -47,7 +47,25 @@ func (v *View) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func IsAuthenticated(r *http.Request, d *Data) {
+	cookie, _ := r.Cookie("remember_token")
+	if cookie != nil && cookie.Value != "" {
+		d.IsAuthenticated = true
+	}
+}
+
 func (v *View) Render(w http.ResponseWriter, r *http.Request, data interface{}) error {
+	var vd Data
+	switch d := data.(type) {
+	case Data:
+		vd = d
+		IsAuthenticated(r, &vd)
+	default:
+		vd = Data{
+			Yield: data,
+		}
+		IsAuthenticated(r, &vd)
+	}
 	var buf bytes.Buffer
 	csrfField := csrf.TemplateField(r)
 	tpl := v.Template.Funcs(template.FuncMap{
@@ -55,7 +73,7 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data interface{}) 
 			return csrfField
 		},
 	})
-	if err := tpl.ExecuteTemplate(&buf, v.Layout, data); err != nil {
+	if err := tpl.ExecuteTemplate(&buf, v.Layout, vd); err != nil {
 		log.Println(err)
 		http.Error(w, "Something went wrong. If the problem persists, please email us.", http.StatusInternalServerError)
 		return nil

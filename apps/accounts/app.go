@@ -25,7 +25,7 @@ func NewSubApp(db *web.DB, cfg *web.AppConfig) *SubApp {
 
 func (s *SubApp) CollectModels(db *web.DB) error {
 	models := []web.Model{
-		&User{},
+		&UserModel{},
 	}
 	for _, m := range models {
 		db.Models = append(db.Models, m)

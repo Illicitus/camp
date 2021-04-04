@@ -20,9 +20,9 @@ type Alert struct {
 }
 
 type Data struct {
-	Alert *Alert
-	Yield interface{}
-	//User  *models.User
+	Alert           *Alert
+	Yield           interface{}
+	IsAuthenticated bool
 }
 
 func (d *Data) SetAlert(err error) {

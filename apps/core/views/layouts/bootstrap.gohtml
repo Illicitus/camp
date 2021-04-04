@@ -17,7 +17,7 @@
     {{if .Alert}}
         {{template "alert" .Alert}}
     {{end}}
-    {{template "navbar"}}
+    {{template "navbar" .}}
     {{template "yield" .Yield}}
     {{template "footer"}}
 
