@@ -44,6 +44,7 @@ type ValidationError struct {
 	// Gallery
 	UserIDRequired privateError
 	TitleRequired  coreError
+	BodyRequired   coreError
 }
 
 func newValidationError() ValidationError {
@@ -61,6 +62,7 @@ func newValidationError() ValidationError {
 
 		UserIDRequired: "validator: user ID is required",
 		TitleRequired:  "validator: title required",
+		BodyRequired:   "validator: body required",
 	}
 }
 

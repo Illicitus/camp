@@ -1,0 +1,17 @@
+{{define "yield"}}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        {{range .}}
+                            <p>{{.Title}}</p>
+                            <p>{{.Body}}</p>
+                            <p>{{.Author}}</p>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{end}}

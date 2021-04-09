@@ -1,0 +1,31 @@
+{{define "yield"}}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        {{template "createArticleForm" .}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{end}}
+
+{{define "createArticleForm"}}
+    <form action="/blog/articles/new" method="POST">
+        {{csrfField}}
+        <div class="mb-3">
+            <label for="title" class="form-label">Article title</label>
+            <input type="text" name="title" class="form-control" id="title" aria-describedby="Article title"
+                   value="{{.Title}}">
+        </div>
+        <div class="mb-3">
+            <label for="body" class="form-label">Article body</label>
+            <input type="text" name="body" class="form-control" id="body" aria-describedby="Article body"
+                   value="{{.Body}}">
+        </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+{{end}}
+

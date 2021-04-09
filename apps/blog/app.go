@@ -12,11 +12,13 @@ var hub = utils.NewLocalHub(SubAppName, cfg.IsProd())
 
 var _ web.SubApp = &SubApp{}
 
-type SubApp struct{}
+type SubApp struct {
+	ac *ArticleController
+}
 
 func NewSubApp(db *web.DB, cfg *web.AppConfig) *SubApp {
 	app := &SubApp{
-		//uc: NewController(db, cfg),
+		ac: NewArticleController(db, cfg),
 	}
 	hub.ErrorHandler(app.CollectModels(db))
 

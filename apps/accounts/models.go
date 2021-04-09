@@ -27,6 +27,7 @@ func (m UserModel) TableName() string {
 func (_ UserModel) IsGormModel() {}
 
 type UserDB interface {
+
 	// Methods for altering users
 	Create(user *UserModel) error
 	Update(user *UserModel) error
