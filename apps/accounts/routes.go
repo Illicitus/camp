@@ -17,6 +17,7 @@ func (s *SubApp) CollectRoutes(r *mux.Router) {
 	r.HandleFunc("/"+SubAppName+"/login", s.uc.LoginPage).Methods("GET")
 	r.HandleFunc("/"+SubAppName+"/login", s.uc.Login).Methods("POST")
 	r.HandleFunc("/"+SubAppName+"/logout", requireUserMiddleware.ApplyFn(s.uc.Logout)).Methods("GET")
-	r.HandleFunc("/"+SubAppName+"/update", requireUserMiddleware.ApplyFn(s.uc.UpdatePage)).Methods("GET")
-	r.HandleFunc("/"+SubAppName+"/update", requireUserMiddleware.ApplyFn(s.uc.Update)).Methods("POST")
+	r.HandleFunc("/"+SubAppName+"/profile", requireUserMiddleware.ApplyFn(s.uc.ProfilePage)).Methods("GET")
+	r.HandleFunc("/"+SubAppName+"/{id:[0-9]+}/update", requireUserMiddleware.ApplyFn(s.uc.UpdatePage)).Methods("GET")
+	r.HandleFunc("/"+SubAppName+"/{id:[0-9]+}/update", requireUserMiddleware.ApplyFn(s.uc.Update)).Methods("POST")
 }

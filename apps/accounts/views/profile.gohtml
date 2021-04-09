@@ -4,7 +4,9 @@
             <div class="col-md-6 offset-md-3">
                 <div class="card">
                     <div class="card-body">
-                        {{template "updateForm" .}}
+                        <p>{{.Name}}</p>
+                        <p>{{.Email}}</p>
+                        <a href="/accounts/{{.ID}}/update" class="btn btn-info" role="button">Edit</a>
                     </div>
                 </div>
             </div>
@@ -13,7 +15,7 @@
 {{end}}
 
 {{define "updateForm"}}
-    <form action="/accounts/{{.ID}}/update" method="POST">
+    <form action="/accounts/{{.UserID}}/update" method="POST">
         {{csrfField}}
         <div class="mb-3">
             <label for="name" class="form-label">Name</label>

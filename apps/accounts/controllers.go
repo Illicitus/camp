@@ -3,8 +3,10 @@ package accounts
 import (
 	"camp/core/utils"
 	"camp/core/web"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -14,18 +16,20 @@ var (
 )
 
 type UserController struct {
-	SignUpView *web.View
-	LoginView  *web.View
-	UpdateView *web.View
-	us         UserService
+	SignUpView  *web.View
+	LoginView   *web.View
+	UpdateView  *web.View
+	ProfileView *web.View
+	us          UserService
 }
 
 func NewController(db *web.DB, cfg *web.AppConfig) *UserController {
 	return &UserController{
-		SignUpView: web.NewView(TemplateDir, LayoutDir, "bootstrap", "new"),
-		LoginView:  web.NewView(TemplateDir, LayoutDir, "bootstrap", "login"),
-		UpdateView: web.NewView(TemplateDir, LayoutDir, "bootstrap", "update"),
-		us:         NewUserService(db.Conn, cfg.Pepper, cfg.HMACKey),
+		SignUpView:  web.NewView(TemplateDir, LayoutDir, "bootstrap", "new"),
+		LoginView:   web.NewView(TemplateDir, LayoutDir, "bootstrap", "login"),
+		UpdateView:  web.NewView(TemplateDir, LayoutDir, "bootstrap", "update"),
+		ProfileView: web.NewView(TemplateDir, LayoutDir, "bootstrap", "profile"),
+		us:          NewUserService(db.Conn, cfg.Pepper, cfg.HMACKey),
 	}
 }
 
@@ -152,15 +156,85 @@ func (uc *UserController) signIn(w http.ResponseWriter, user *UserModel) error {
 		Path:     "/",
 	}
 	http.SetCookie(w, &cookie)
+
+	cookie = http.Cookie{
+		Name:     "user_id",
+		Value:    strconv.Itoa(int(user.ID)),
+		HttpOnly: true,
+		Path:     "/",
+	}
+	http.SetCookie(w, &cookie)
+
 	return nil
 }
 
-func (uc *UserController) UpdatePage(w http.ResponseWriter, r *http.Request) {
-	var form UpdateForm
+func (uc *UserController) userByID(w http.ResponseWriter, r *http.Request) (*UserModel, error) {
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid user ID", http.StatusNotFound)
+		return nil, err
+	}
+	user, err := uc.us.ByID(uint(id))
+	if err != nil {
+		switch err {
+		case utils.GormErr.NotFound:
+			http.Error(w, "Invalid user ID", http.StatusNotFound)
+		default:
+			http.Error(w, "Something wend wrong", http.StatusInternalServerError)
+		}
+		return nil, err
+	}
+	return user, nil
+}
+
+func (uc *UserController) userByRemember(w http.ResponseWriter, r *http.Request) (*UserModel, error) {
+	cookie, err := r.Cookie("remember_token")
+	if err != nil {
+		return nil, err
+	}
+	user, err := uc.us.ByRemember(cookie.Value)
+	if err != nil {
+		switch err {
+		case utils.GormErr.NotFound:
+			http.Error(w, "Invalid user ID", http.StatusNotFound)
+		default:
+			http.Error(w, "Something wend wrong", http.StatusInternalServerError)
+		}
+		return nil, err
+	}
+	return user, nil
+}
+
+func (uc *UserController) ProfilePage(w http.ResponseWriter, r *http.Request) {
+	user, err := uc.userByRemember(w, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	vd := web.Data{}
+
+	vd.Yield = &user
 
 	// Ignore parse url errors
-	hub.IgnoreErrorHandler(web.ParseURLParams(r, &form))
-	hub.ErrorHandler(uc.UpdateView.Render(w, r, form))
+	hub.IgnoreErrorHandler(web.ParseURLParams(r, vd))
+	hub.ErrorHandler(uc.ProfileView.Render(w, r, vd))
+}
+
+func (uc *UserController) UpdatePage(w http.ResponseWriter, r *http.Request) {
+	user, err := uc.userByID(w, r)
+	if err != nil {
+		return
+	}
+	vd := web.Data{}
+
+	vd.Yield = &user
+
+	// Ignore parse url errors
+	hub.IgnoreErrorHandler(web.ParseURLParams(r, vd))
+	hub.ErrorHandler(uc.UpdateView.Render(w, r, vd))
 }
 
 func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
@@ -168,7 +242,7 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 
 	var form UpdateForm
 	var vd web.Data
-	vd.Yield = &form
+	vd.Yield = &user
 
 	if err := web.ParseForm(r, &form); err != nil {
 		log.Println(err)
@@ -185,7 +259,7 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 	vd.Alert = &web.Alert{
 		Level:   web.AlertLvlSuccess,
-		Message: "Gallery successfully updated!",
+		Message: "User successfully updated!",
 	}
 	hub.ErrorHandler(uc.UpdateView.Render(w, r, vd))
 }

@@ -118,6 +118,7 @@ func (uv *userValidator) emailIsAvailable(user *UserModel) error {
 	if err != nil {
 		return err
 	}
+
 	// Email exists, return validation error then
 	if user.ID != existing.ID {
 		return utils.ValErr.EmailTaken
