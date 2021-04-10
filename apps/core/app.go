@@ -1,6 +1,7 @@
 package core
 
 import (
+	"camp/apps/accounts"
 	"camp/core/utils"
 	"camp/core/web"
 )
@@ -13,12 +14,14 @@ var hub = utils.NewLocalHub(SubAppName, cfg.IsProd())
 var _ web.SubApp = &SubApp{}
 
 type SubApp struct {
-	c *Controller
+	c                     *Controller
+	RequireUserMiddleware accounts.RequireUser
 }
 
-func NewSubApp(db *web.DB, cfg *web.AppConfig) *SubApp {
+func NewSubApp(db *web.DB, cfg *web.AppConfig, rm accounts.RequireUser) *SubApp {
 	app := &SubApp{
-		c: NewController(db, cfg),
+		c:                     NewController(db, cfg),
+		RequireUserMiddleware: rm,
 	}
 	hub.ErrorHandler(app.CollectModels(db))
 

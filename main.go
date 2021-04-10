@@ -33,10 +33,11 @@ func main() {
 	}(db)
 
 	// Generate web sub app
+	accountsSubApp := accounts.NewSubApp(db, cfg)
 	apps := []web.SubApp{
-		accounts.NewSubApp(db, cfg),
-		blog.NewSubApp(db, cfg),
-		core.NewSubApp(db, cfg),
+		accountsSubApp,
+		blog.NewSubApp(db, cfg, accountsSubApp.RequireUserMiddleware),
+		core.NewSubApp(db, cfg, accountsSubApp.RequireUserMiddleware),
 	}
 
 	//if err := db.DestructiveReset(); err != nil {

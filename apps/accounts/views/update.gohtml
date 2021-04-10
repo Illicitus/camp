@@ -4,12 +4,24 @@
             <div class="col-md-6 offset-md-3">
                 <div class="card">
                     <div class="card-body">
+                        {{template "avatarUploadForm" .}}
                         {{template "updateForm" .}}
                     </div>
                 </div>
             </div>
         </div>
     </div>
+{{end}}
+
+{{define "avatarUploadForm"}}
+    <form action="/accounts/avatar" method="POST" enctype="multipart/form-data">
+        {{csrfField}}
+        <div class="form-group">
+            <label for="avatar">Upload images</label>
+            <input type="file" class="form-control-file" id="avatar" name="avatar" multiple="multiple">
+        </div>
+        <button type="submit" class="btn btn-default">Upload</button>
+    </form>
 {{end}}
 
 {{define "updateForm"}}

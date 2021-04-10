@@ -15,12 +15,17 @@ var (
 	TemplateDir = "apps/accounts/views/"
 )
 
+const (
+	maxMultipartMem = 1 << 20 // 1 megabyte (2 << 20 = 2 mb), 2 << 10 = 1 kb
+)
+
 type UserController struct {
 	SignUpView  *web.View
 	LoginView   *web.View
 	UpdateView  *web.View
 	ProfileView *web.View
 	us          UserService
+	uas         UserAvatarService
 }
 
 func NewController(db *web.DB, cfg *web.AppConfig) *UserController {
@@ -30,6 +35,7 @@ func NewController(db *web.DB, cfg *web.AppConfig) *UserController {
 		UpdateView:  web.NewView(TemplateDir, LayoutDir, "bootstrap", "update"),
 		ProfileView: web.NewView(TemplateDir, LayoutDir, "bootstrap", "profile"),
 		us:          NewUserService(db.Conn, cfg.Pepper, cfg.HMACKey),
+		uas:         NewUserAvatarService(db.Conn),
 	}
 }
 
@@ -213,11 +219,50 @@ func (uc *UserController) ProfilePage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	uc.us.ProfileByUserID(user.ID)
+	vd := web.Data{}
+	vd.Yield = &user
+
+	// Ignore parse url errors
+	hub.IgnoreErrorHandler(web.ParseURLParams(r, vd))
+	hub.ErrorHandler(uc.ProfileView.Render(w, r, vd))
+}
+
+func (uc *UserController) UpdateAvatar(w http.ResponseWriter, r *http.Request) {
+	user, err := uc.userByRemember(w, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	vd := web.Data{}
 
-	vd.Yield = &user
+	err = r.ParseMultipartForm(maxMultipartMem)
+	if err != nil {
+		vd.SetAlert(err)
+		hub.ErrorHandler(uc.ProfileView.Render(w, r, vd))
+		return
+	}
 
+	files := r.MultipartForm.File["avatar"]
+	for _, f := range files {
+		file, err := f.Open()
+		if err != nil {
+			vd.SetAlert(err)
+			hub.ErrorHandler(uc.ProfileView.Render(w, r, vd))
+			return
+		}
+		defer func() {
+			hub.ErrorHandler(file.Close())
+		}()
+
+		err = uc.uas.Create(user.ID, file, f.Filename)
+		if err != nil {
+			vd.SetAlert(err)
+			hub.ErrorHandler(uc.ProfileView.Render(w, r, vd))
+			return
+		}
+	}
 	// Ignore parse url errors
 	hub.IgnoreErrorHandler(web.ParseURLParams(r, vd))
 	hub.ErrorHandler(uc.ProfileView.Render(w, r, vd))

@@ -1,6 +1,6 @@
 package blog
 
 type ArticleForm struct {
-	Title string `schema:"tile"`
+	Title string `schema:"title"`
 	Body  string `schema:"body"`
 }

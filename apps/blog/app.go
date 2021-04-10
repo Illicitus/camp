@@ -1,6 +1,7 @@
 package blog
 
 import (
+	"camp/apps/accounts"
 	"camp/core/utils"
 	"camp/core/web"
 )
@@ -13,12 +14,14 @@ var hub = utils.NewLocalHub(SubAppName, cfg.IsProd())
 var _ web.SubApp = &SubApp{}
 
 type SubApp struct {
-	ac *ArticleController
+	ac                    *ArticleController
+	RequireUserMiddleware accounts.RequireUser
 }
 
-func NewSubApp(db *web.DB, cfg *web.AppConfig) *SubApp {
+func NewSubApp(db *web.DB, cfg *web.AppConfig, rm accounts.RequireUser) *SubApp {
 	app := &SubApp{
-		ac: NewArticleController(db, cfg),
+		ac:                    NewArticleController(db, cfg),
+		RequireUserMiddleware: rm,
 	}
 	hub.ErrorHandler(app.CollectModels(db))
 

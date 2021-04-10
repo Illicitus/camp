@@ -33,7 +33,7 @@ type userValidator struct {
 	pepper     string
 }
 
-func newUserValidator(udb UserDB, hmac utils.HMAC, pepper string) *userValidator {
+func NewUserValidator(udb UserDB, hmac utils.HMAC, pepper string) *userValidator {
 	return &userValidator{
 		UserDB:     udb,
 		hmac:       hmac,
@@ -235,4 +235,27 @@ func (uv *userValidator) Update(user *UserModel) error {
 		return err
 	}
 	return uv.UserDB.Update(user)
+}
+
+type userAvatarValFunc func(*UserAvatarModel) error
+
+func runUserAvatarValFuncs(avatar *UserAvatarModel, fns ...userAvatarValFunc) error {
+	for _, fn := range fns {
+		if err := fn(avatar); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+var _ UserAvatarDB = &userAvatarValidator{}
+
+type userAvatarValidator struct {
+	UserAvatarDB
+}
+
+func MewUserAvatarValidator(udb UserAvatarDB) *userAvatarValidator {
+	return &userAvatarValidator{
+		UserAvatarDB: udb,
+	}
 }

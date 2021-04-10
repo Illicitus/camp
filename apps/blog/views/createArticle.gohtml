@@ -22,8 +22,9 @@
         </div>
         <div class="mb-3">
             <label for="body" class="form-label">Article body</label>
-            <input type="text" name="body" class="form-control" id="body" aria-describedby="Article body"
-                   value="{{.Body}}">
+            <textarea name="body" class="form-control" id="body" aria-describedby="Article body">
+                {{.Body}}
+            </textarea>
         </div>
         <button type="submit" class="btn btn-primary">Create</button>
     </form>

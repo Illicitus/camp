@@ -15,3 +15,14 @@ type UpdateForm struct {
 	Name  string `schema:"name"`
 	Email string `schema:"email"`
 }
+
+type AvatarForm struct {
+	UserID   string `schema:"userID"`
+	Filename string `schema:"fileName"`
+}
+
+type ProfileForm struct {
+	Name   string `schema:"name"`
+	Email  string `schema:"email"`
+	Avatar AvatarForm
+}

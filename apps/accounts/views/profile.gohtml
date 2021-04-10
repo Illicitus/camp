@@ -13,23 +13,3 @@
         </div>
     </div>
 {{end}}
-
-{{define "updateForm"}}
-    <form action="/accounts/{{.UserID}}/update" method="POST">
-        {{csrfField}}
-        <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
-            <input type="text" name="name" class="form-control" id="name" aria-describedby="Name"
-                   value="{{.Name}}">
-            <div id="emailHelp" class="form-text">Name</div>
-        </div>
-        <div class="mb-3">
-            <label for="email" class="form-label">Email address</label>
-            <input type="email" name="email" class="form-control" id="email" aria-describedby="Email"
-                   value="{{.Email}}">
-            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-        </div>
-        <button type="submit" class="btn btn-primary">Update</button>
-    </form>
-{{end}}
-
